@@ -17,6 +17,27 @@ var User = require('./app/models/user');
 
 var router = express.Router();
 
+function authenticateRequest(req, res, callback) {
+    User.findOne({token: req.body.token}, function(err, user) {
+        if (err) {
+            res.send(err);
+
+            return;
+        }
+
+        if (user) {
+            if (callback) {
+                callback(user);
+            }
+        } else {
+            res.json({
+                success: false,
+                message: "Invalid token, authentication needed."
+            });
+        }
+    });
+}
+
 router.route('/dishes')
 
     .get(function(req, res) {
@@ -56,45 +77,57 @@ router.route('/dishes')
                 res.send(err);
             }
 
-            res.json(dishes);
+            res.json({
+                success: true,
+                dishes: dishes
+            });
         });
     })
 
     .post(function(req, res) {
+        authenticateRequest(req, res, function() {
+            var dish = new Dish();
+            dish.year = req.body.year;
+            dish.name = req.body.name;
+            dish.week = req.body.week;
+            dish.day = req.body.day;
 
-        var token = req.body.token;
+            dish.save(function(err) {
+                if (err) {
+                    res.send(err);
 
-        User.findOne({token: token}, function(err, user) {
-            if (err) {
-                res.send(err);
-            }
+                    return;
+                }
 
-            if (user) {
-                var dish = new Dish();
-                dish.year = req.body.year;
-                dish.name = req.body.name;
-                dish.week = req.body.week;
-                dish.day = req.body.day;
-
-                dish.save(function(err) {
-                    if (err) {
-                        res.send(err);
-                    }
-
-                    res.json({
-                        success: true,
-                        id: dish._id
-                    });
-                });
-            } else {
                 res.json({
-                    success: false,
-                    message: "Invalid token, authentication needed."
+                    success: true,
+                    dish: dish
                 });
-            }
+            });
         });
     })
 ;
+
+router.route('/dishes/:dish_id')
+
+    .post(function(req, res) {
+        authenticateRequest(req, res, function() {
+            Dish.remove({
+                _id: req.params.dish_id
+            }, function(err, dish) {
+                if (err) {
+                    res.send(err);
+
+                    return;
+                }
+
+                res.json({
+                    success: true,
+                    dish: dish
+                });
+            });
+        });
+    });
 
 function makeid()
 {
@@ -115,25 +148,64 @@ router.route('/users')
         user.password = req.body.password;
         user.token = makeid();
 
-        User.findOne({name: user.name}, "name", function(err, found) {
+        if (!user.name) {
+            res.json({
+                success: false,
+                message: "Invalid name"
+            });
+
+            return;
+        }
+
+        if (!user.password) {
+            res.json({
+                success: false,
+                message: "Invalid password"
+            });
+
+            return;
+        }
+
+        User.findOne({name: user.name}, function(err, found) {
             if (err) {
                 res.send(err);
+
+                return;
             }
 
             if (found) {
+                if (found.password != user.password) {
+                    res.json({
+                        success: false,
+                        message: "Invalid password"
+                    });
+
+                    return;
+                }
+
                 res.json({
-                    success: false,
-                    message: "User already exists"
+                    success: true,
+                    user: {
+                        token: found.token,
+                        name: found.name,
+                        admin: found.admin
+                    }
                 });
             } else {
                 user.save(function(err) {
                     if (err) {
                         res.send(err);
+
+                        return;
                     }
 
                     res.json({
                         success: true,
-                        token: user.token
+                        user: {
+                            token: user.token,
+                            name: user.name,
+                            admin: user.admin
+                        }
                     });
                 });
             }
@@ -141,17 +213,19 @@ router.route('/users')
     })
 
     .get(function(req, res) {
-        User.findOne({name: req.body.name, password: req.body.password}, 'token', function(err, user) {
+        User.find({}, 'name', function(err, users) {
             if (err) {
                 res.send(err);
             }
 
             res.json({
                 success: true,
-                token: user.token
+                users: users
             });
         });
     });
+
+
 
 app.use('/api', router);
 app.listen(port);
