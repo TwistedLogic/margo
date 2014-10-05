@@ -15,7 +15,7 @@ $(function() {
         };
 
         self.fetchUsers = function() {
-            $.getJSON('http://localhost:8080/api/users', function(res) {
+            $.getJSON('http://margo.fubles.com:8080/api/users', function(res) {
                 if (res.success) {
                     appViewModel.users(res.users);
                 }
@@ -23,7 +23,7 @@ $(function() {
         };
 
         self.updateDishes = function() {
-            $.getJSON('http://localhost:8080/api/dishes', {
+            $.getJSON('http://margo.fubles.com:8080/api/dishes', {
                 year: self.week().format('YYYY'),
                 week: self.week().format('w')
             }, function(res) {
@@ -66,7 +66,7 @@ $(function() {
 
         self.deleteDish = function(dish) {
             if (confirm("Really want to delete the dish \"" + dish.name + "\"?")) {
-                $.post("http://localhost:8080/api/dishes/" + dish._id, {
+                $.post("http://margo.fubles.com:8080/api/dishes/" + dish._id, {
                     token: self.user().token
                 })
                     .success(function() {
@@ -97,7 +97,7 @@ $(function() {
                     token: self.user().token
                 };
 
-                $.post("http://localhost:8080/api/dishes", dish).success(function() {
+                $.post("http://margo.fubles.com:8080/api/dishes", dish).success(function() {
                     self.days()[dish.day - 1].dishes.push(dish);
                     $name.val('');
                 }).error(function(jqXHR) {
