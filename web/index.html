@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Chez Margo</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link href='style.css' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <div id="home" data-bind="visible: !user()">
+            <h1>Chez Margó</h1>
+
+            <form id="login-form" method="post" action="http://localhost:8080/api/users" role="form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input name="name" type="text" class="form-control" id="name" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input name="password" type="password" class="form-control" id="password" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">Start eating well!</button>
+            </form>
+        </div>
+
+        <div id="main" data-bind="visible: user() && user().token">
+            <h1 data-bind="if: user()">
+                Chez Margó
+                <span id="account">
+                    <span data-bind="text: user().name"></span>
+                    <a id="logout" href="#">Logout</a>
+                </span>
+            </h1>
+
+            <div id="week">
+                <a href="#" data-bind="click: previousWeek"><</a>
+                <span data-bind="text: formattedWeek()"></span>
+                <a href="#" data-bind="click: nextWeek">></a>
+            </div>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <!-- ko foreach: days -->
+                        <th data-bind="text: name"></th>
+                        <!-- /ko -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="dish"></td>
+                        <!-- ko foreach: days -->
+                        <td class="dish">
+                            <ul>
+                                <!-- ko foreach: dishes -->
+                                <li class="dish" data-bind="text: name, click: $root.deleteDish"></li>
+                                <!-- /ko -->
+                                <!-- ko if: $root.user().admin -->
+                                <li>
+                                    <form class="add-dish" data-bind="submit: $root.addDish">
+                                        <input type="text" name="name" placeholder="+ Add a dish" data-bind="attr: {'data-day': $index() + 1}" />
+                                    </form>
+                                </li>
+                                <!-- /ko -->
+                            </ul>
+                        </td>
+                        <!-- /ko -->
+                    </tr>
+                    <!-- ko foreach: users -->
+                    <tr>
+                        <td class="username" data-bind="text: name"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <!-- /ko -->
+                </tbody>
+            </table>
+        </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="http://malsup.github.com/jquery.form.js"></script>
+        <script type="text/javascript" src="moment.js"></script>
+        <script type="text/javascript" src="client.js"></script>
+    </body>
+</html>

@@ -1,0 +1,103 @@
+body {
+    font-family: 'Poiret One', cursive;
+    margin: 0 0px;
+    font-size: 18px;
+}
+
+#home {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+#home h1 {
+    font-size: 60px;
+    margin: 50px 0;
+}
+
+h1 {
+    position: relative;
+    font-family: 'Dancing Script', cursive;
+    text-align: center;
+}
+
+#account {
+    font-family: 'Poiret One', cursive;
+    position: absolute;
+    font-size: 20px;
+    text-transform: capitalize;
+    right: 20px;
+    top: 10px;
+}
+
+#week {
+    font-size: 14px;
+    text-align: center;
+}
+
+#week a {
+    font-size: 20px;
+    font-weight: bold;
+    vertical-align: middle;
+    margin: 0 10px;
+}
+
+#week a:hover {
+    text-decoration: none;
+}
+
+ul {
+    padding-left: 0;
+}
+
+li {
+    text-transform: capitalize;
+    list-style-type: none;
+    border-bottom: 1px solid rgba(245, 250, 255, 0.17);
+    margin-bottom: 10px;
+}
+
+th {
+    font-size: 20px;
+    color: purple;
+    border-bottom: 0 !important;
+}
+
+td, th {
+    padding: 20px !important;
+}
+
+.username {
+    color: purple;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+td.dish {
+    background: rgba(108, 69, 117, 0.65) !important;
+    color: white;
+    width: 5% !important;
+}
+
+form input {
+    background: transparent;
+    border: 0;
+    color: white;
+    outline: none;
+}
+
+::-webkit-input-placeholder {
+    color: purple;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+    color: purple;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+    color: purple;
+}
+
+:-ms-input-placeholder {
+    color: purple;
+}
