@@ -1,52 +1,20 @@
 $(function() {
+    var HOST = 'http://localhost:8080',
+        STORAGE_USER_KEY = 'margot.user';
+
     var AppViewModel = function() {
         var self = this;
 
+        self.host = HOST;
         self.user = ko.observable();
-        self.users = ko.observableArray([]);
-        self.days = ko.observableArray([]);
+        self.days = ko.observableArray();
+        self.users = ko.observableArray();
         self.week = ko.observable(moment().startOf('week'));
 
         self.setUser = function(user) {
             self.user(user);
-            localStorage.setItem('user', JSON.stringify(self.user()));
-            self.fetchUsers();
-            self.updateDishes();
-        };
-
-        self.fetchUsers = function() {
-            $.getJSON('http://margo.fubles.com:8080/api/users', function(res) {
-                if (res.success) {
-                    appViewModel.users(res.users);
-                }
-            });
-        };
-
-        self.updateDishes = function() {
-            $.getJSON('http://margo.fubles.com:8080/api/dishes', {
-                year: self.week().format('YYYY'),
-                week: self.week().format('w')
-            }, function(res) {
-                var days = [
-                    { name: 'Monday', dishes: ko.observableArray() },
-                    { name: 'Tuesday', dishes: ko.observableArray() },
-                    { name: 'Wednesday', dishes: ko.observableArray() },
-                    { name: 'Thursday', dishes: ko.observableArray() },
-                    { name: 'Friday', dishes: ko.observableArray() }
-                ];
-
-                if (res.success) {
-                    for (var i = 0; i < res.dishes.length; i++) {
-                        var dish = res.dishes[i];
-
-                        days[dish.day-1].dishes.push(dish);
-                    }
-                } else {
-                    alert(res.message);
-                }
-
-                self.days(days);
-            });
+            localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(self.user()));
+            getWeek();
         };
 
         self.formattedWeek = ko.computed(function() {
@@ -56,17 +24,17 @@ $(function() {
 
         self.previousWeek = function() {
             self.week(self.week().subtract(1, 'week'));
-            self.updateDishes();
+            getWeek();
         };
 
         self.nextWeek = function() {
             self.week(self.week().add(1, 'week'));
-            self.updateDishes();
+            getWeek();
         };
 
         self.deleteDish = function(dish) {
             if (confirm("Really want to delete the dish \"" + dish.name + "\"?")) {
-                $.post("http://margo.fubles.com:8080/api/dishes/" + dish._id, {
+                $.post(HOST + "/api/dishes/" + dish._id, {
                     token: self.user().token
                 })
                     .success(function() {
@@ -97,13 +65,42 @@ $(function() {
                     token: self.user().token
                 };
 
-                $.post("http://margo.fubles.com:8080/api/dishes", dish).success(function() {
+                $.post(HOST + "/api/dishes", dish).success(function() {
                     self.days()[dish.day - 1].dishes.push(dish);
                     $name.val('');
                 }).error(function(jqXHR) {
                     alert(jqXHR.responseText);
                 });
             }
+        };
+
+        function getWeek() {
+            $.getJSON(HOST + '/api/week', {
+                token: self.user().token,
+                year: self.week().format('YYYY'),
+                week: self.week().format('w')
+            }, function(res) {
+                var days = [
+                    { name: 'Monday', dishes: ko.observableArray() },
+                    { name: 'Tuesday', dishes: ko.observableArray() },
+                    { name: 'Wednesday', dishes: ko.observableArray() },
+                    { name: 'Thursday', dishes: ko.observableArray() },
+                    { name: 'Friday', dishes: ko.observableArray() }
+                ];
+
+                if (res.success) {
+                    for (var i = 0; i < res.dishes.length; i++) {
+                        var dish = res.dishes[i];
+
+                        days[dish.day-1].dishes.push(dish);
+                    }
+                } else {
+                    alert(res.message);
+                }
+
+                self.days(days);
+                self.users(res.users);
+            });
         }
     };
 
@@ -123,21 +120,17 @@ $(function() {
     });
 
     $('#main').on('click', '#logout', function() {
-        localStorage.setItem('user', null);
+        localStorage.removeItem(STORAGE_USER_KEY);
         appViewModel.user(null);
 
         return false;
-    });
-
-    $('#main').on('focusout', 'form.add-dish input', function() {
+    }).on('focusout', 'form.add-dish input', function() {
         $(this).closest('form').submit();
     });
 
-    var user = localStorage.getItem('user');
+    var user = localStorage.getItem(STORAGE_USER_KEY);
 
     if (user) {
         appViewModel.setUser(JSON.parse(user));
-        appViewModel.fetchUsers();
-        appViewModel.updateDishes();
     }
 });

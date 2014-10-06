@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Chez Margo</title>
+        <title>Chez Margot</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href='http://fonts.googleapis.com/css?family=Dancing+Script:400,700' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Poiret+One' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
         <link href='style.css' rel='stylesheet' type='text/css'>
     </head>
     <body>
         <div id="home" data-bind="visible: !user()">
-            <h1>Chez Margó</h1>
+            <h1>Chez Margot</h1>
 
-            <form id="login-form" method="post" action="http://margo.fubles.com:8080/api/users" role="form">
+            <form id="login-form" method="post" data-bind="attr: {action: host + '/api/users'}" role="form">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input name="name" type="text" class="form-control" id="name" placeholder="Your name">
@@ -29,7 +30,7 @@
 
         <div id="main" data-bind="visible: user() && user().token">
             <h1 data-bind="if: user()">
-                Chez Margó
+                Chez Margot
                 <span id="account">
                     <span data-bind="text: user().name"></span>
                     <a id="logout" href="#">Logout</a>
@@ -37,9 +38,9 @@
             </h1>
 
             <div id="week">
-                <a href="#" data-bind="click: previousWeek"><</a>
+                <i class="fa fa-chevron-left" data-bind="click: previousWeek"></i>
                 <span data-bind="text: formattedWeek()"></span>
-                <a href="#" data-bind="click: nextWeek">></a>
+                <i class="fa fa-chevron-right" data-bind="click: nextWeek"></i>
             </div>
 
             <table class="table table-striped">
@@ -60,7 +61,7 @@
                                 <!-- ko foreach: dishes -->
                                 <li class="dish" data-bind="text: name, click: $root.deleteDish"></li>
                                 <!-- /ko -->
-                                <!-- ko if: $root.user().admin -->
+                                <!-- ko if: $root.user() && $root.user().admin -->
                                 <li>
                                     <form class="add-dish" data-bind="submit: $root.addDish">
                                         <input type="text" name="name" placeholder="+ Add a dish" data-bind="attr: {'data-day': $index() + 1}" />
@@ -72,13 +73,13 @@
                         <!-- /ko -->
                     </tr>
                     <!-- ko foreach: users -->
-                    <tr>
+                    <tr class="tickets">
                         <td class="username" data-bind="text: name"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[0]}"></i></td>
+                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[1]}"></i></td>
+                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[2]}"></i></td>
+                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[3]}"></i></td>
+                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[4]}"></i></td>
                     </tr>
                     <!-- /ko -->
                 </tbody>
