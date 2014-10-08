@@ -30,7 +30,11 @@ router.route('/dishes/:dish_id')
 
     // Delete a dish
     .post(function(req, res) {
-        utils.authenticateRequest(req, res, function() {
+        utils.authenticateRequest(req, res, function(user) {
+            if (!user.admin) {
+                return;
+            }
+
             Dish.remove({
                 _id: req.params.dish_id
             }, function(err, dish) {

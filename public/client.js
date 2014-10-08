@@ -33,6 +33,10 @@ $(function() {
         };
 
         self.deleteDish = function(dish) {
+            if (!self.user().admin) {
+                return;
+            }
+
             if (confirm("Really want to delete the dish \"" + dish.name + "\"?")) {
                 $.post(HOST + "/api/dishes/" + dish._id, {
                     token: self.user().token
