@@ -75,11 +75,9 @@
                     <!-- ko foreach: users -->
                     <tr class="tickets">
                         <td class="username" data-bind="text: name"></td>
-                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[0]}"></i></td>
-                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[1]}"></i></td>
-                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[2]}"></i></td>
-                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[3]}"></i></td>
-                        <td><i class="fa fa-cutlery" data-bind="css: {'active': tickets[4]}"></i></td>
+                        <!-- ko foreach: tickets -->
+                        <td><i class="fa fa-cutlery" data-bind="css: {'active': $data}, click: $root.toggleTicket, attr: {'data-day': $index() + 1, 'data-parent': $parent.name}"></i></td>
+                        <!-- /ko -->
                     </tr>
                     <!-- /ko -->
                 </tbody>

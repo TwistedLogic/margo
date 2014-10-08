@@ -53,7 +53,7 @@ router.route('/week')
                         if (err) { res.send(err); return }
 
                         for (i = 0; i < tickets.length; i++) {
-                            map[tickets[i].user].tickets[tickets[i].day - 1] = true;
+                            map[tickets[i].user].tickets[tickets[i].day - 1] = tickets[i]._id;
                         }
 
                         var weekUsers = [];
