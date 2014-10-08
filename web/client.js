@@ -1,5 +1,5 @@
 $(function() {
-    var HOST = 'http://localhost:8080',
+    var HOST = 'http://margot.fubles.com',
         STORAGE_USER_KEY = 'margot.user';
 
     var AppViewModel = function() {
