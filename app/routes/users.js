@@ -46,6 +46,7 @@ router.route('/users')
                 });
             } else {
                 // Create a new user
+                /*
                 user.save(function(err) {
                     if (err) { res.send(err); return }
 
@@ -58,6 +59,10 @@ router.route('/users')
                         }
                     });
                 });
+                */
+
+                // User registration disabled
+                res.json({error: true, message: "User registration disabled"});
             }
         });
     })
